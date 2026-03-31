@@ -1,0 +1,45 @@
+when:
+  - event: push
+    branch: main
+
+clone:
+  - name: git
+    image: woodpeckerci/plugin-git
+    settings:
+      partial: false
+      depth: 1
+
+steps:
+  - name: build-and-push
+    image: gcr.io/kaniko-project/executor:v1.24.0-debug
+    commands:
+      - |
+        for i in $(seq 1 60); do
+          wget --no-check-certificate -q -O /dev/null -S --timeout=2 https://git.pmon.dev/v2/ 2>&1 | grep -q "HTTP/" && break
+          sleep 1
+        done
+      - mkdir -p /kaniko/.docker
+      - echo "{\"auths\":{\"git.pmon.dev\":{\"username\":\"$REGISTRY_USER\",\"password\":\"$REGISTRY_TOKEN\"}}}" > /kaniko/.docker/config.json
+      - /kaniko/executor
+          --context=.
+          --destination=git.pmon.dev/schnappy/sonar-scanner:latest
+          --destination=git.pmon.dev/schnappy/sonar-scanner:$(echo "$CI_COMMIT_SHA" | cut -c1-7)
+          --skip-tls-verify-registry=git.pmon.dev
+          --registry-mirror=nexus.pmon.dev:8082
+          --insecure-registry=nexus.pmon.dev:8082
+          --build-arg=http_proxy=http://schnappy-apt-cache.schnappy.svc.cluster.local:3142
+          --cache=false
+    backend_options:
+      kubernetes:
+        resources:
+          requests: { cpu: 500m, memory: 1Gi }
+          limits: { cpu: 2000m, memory: 2Gi }
+        secrets:
+          - name: woodpecker-ci-secrets
+            key: registry_user
+            target:
+              env: REGISTRY_USER
+          - name: woodpecker-ci-secrets
+            key: registry_token
+            target:
+              env: REGISTRY_TOKEN
