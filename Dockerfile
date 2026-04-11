@@ -6,7 +6,8 @@ RUN apt-get update && \
     mkdir -p /opt/java && \
     tar -xzf /tmp/jre.tar.gz -C /opt/java --strip-components=1 && \
     rm /tmp/jre.tar.gz && \
-    npm install -g npm@latest sonarqube-scanner && \
+    npm install -g npm@latest && \
+    npm install -g sonarqube-scanner && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV SONAR_SCANNER_JAVA_EXE_PATH=/opt/java/bin/java
