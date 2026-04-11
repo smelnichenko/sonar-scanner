@@ -1,7 +1,7 @@
 FROM node:22-bookworm-slim
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends wget && \
+    apt-get install -y --no-install-recommends wget ca-certificates && \
     wget -qO /tmp/jre.tar.gz https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.9%2B10/OpenJDK21U-jre_x64_linux_hotspot_21.0.9_10.tar.gz && \
     mkdir -p /opt/java && \
     tar -xzf /tmp/jre.tar.gz -C /opt/java --strip-components=1 && \
