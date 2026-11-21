@@ -3,6 +3,10 @@
   "extends": [
     "local>schnappy/ops//renovate/apps"
   ],
+  "description": [
+    "One open pull request at a time (operator 2026-11-21): each update is built and tried by hand before the next - the shared preset's 5 is for the app repos"
+  ],
+  "prConcurrentLimit": 1,
   "customManagers": [
     {
       "customType": "regex",
