@@ -1,0 +1,50 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "local>schnappy/ops//renovate/apps"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "The scanner the Dockerfile's npm install pins - read by no manager",
+      "managerFilePatterns": [
+        "/(^|/)Dockerfile$/"
+      ],
+      "matchStrings": [
+        "npm install -g (?<depName>sonarqube-scanner)@(?<currentValue>\\d[^\\s\\\\&]*)"
+      ],
+      "datasourceTemplate": "npm"
+    },
+    {
+      "customType": "regex",
+      "description": "The JRE the scanner runs on: Adoptium's Temurin 21 release named by ARG JRE_VERSION (21.0.9+10 - the build number counts)",
+      "managerFilePatterns": [
+        "/(^|/)Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ARG JRE_VERSION=(?<currentValue>\\S+)"
+      ],
+      "depNameTemplate": "temurin21-jre",
+      "packageNameTemplate": "adoptium/temurin21-binaries",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^jdk-(?<version>.+)$",
+      "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\+(?<build>\\d+)$"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "sonarqube-scanner 5.0 dropped the sonar-scanner command: a move to 5 renames it in this ENTRYPOINT and in every repo's pipeline together - by hand, not here",
+      "matchPackageNames": [
+        "sonarqube-scanner"
+      ],
+      "allowedVersions": "<5"
+    },
+    {
+      "description": "No pull-request CI here: every update is built and tried by hand before its merge - never merged by Renovate",
+      "matchPackageNames": [
+        "*"
+      ],
+      "automerge": false
+    }
+  ]
+}
