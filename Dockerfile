@@ -6,7 +6,7 @@ FROM node:22-bookworm-slim
 
 # the JRE: Adoptium's Temurin 21 release, named once (Renovate moves it - renovate.json); its download URL spells the
 # build number twice, as %2B10 in the tag and _10 in the file name
-ARG JRE_VERSION=21.0.9+10
+ARG JRE_VERSION=21.0.13+9
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends wget ca-certificates && \
