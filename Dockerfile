@@ -1,4 +1,4 @@
-FROM node:22-bookworm-slim
+FROM node:26-bookworm-slim
 
 # sonarqube-scanner pinned: 5.0 (2026-07-20) dropped the `sonar-scanner` command (only `sonar-scanner-npm` is left), and
 # an unpinned rebuild on 2026-10-12 left every repo's CI sonar step "sonar-scanner: not found". 4.4.0 is the last release
